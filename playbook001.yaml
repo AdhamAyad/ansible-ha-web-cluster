@@ -1,0 +1,37 @@
+---
+- name: Configure Localhost (Proxy Server)
+  hosts: localhost
+  become: true
+
+  roles:
+    - squid_controller
+
+- name: Final Project
+  hosts: testnat
+  become: true
+  
+  vars:
+    virtual_ip: "192.168.235.160"
+
+  roles:
+    - squid_client
+    - httpd
+    - haproxy
+    - keepalived
+    
+
+# - name: Final Project
+#   hosts: final
+#   become: true
+#   vars:
+#     virtual_ip: "10.178.240.253"
+#   tasks:
+#   - name: install httpd
+#     ansible.builtin.import_tasks: ./tasks/install_httpd.yaml
+#   - name: install HAproxy
+#     ansible.builtin.import_tasks: ./tasks/install_haproxy.yaml
+#   - name: install keepalive
+#     ansible.builtin.import_tasks: ./tasks/install_keepalived.yaml    
+#   # - name: install squid
+#   #   ansible.builtin.import_tasks: ./tasks/install_squid.yaml  
+      

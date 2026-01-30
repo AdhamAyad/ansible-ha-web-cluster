@@ -1,0 +1,3 @@
+---
+proxy_ip: "{{ hostvars['localhost']['ansible_default_ipv4']['address'] }}"
+proxy_port: 3128

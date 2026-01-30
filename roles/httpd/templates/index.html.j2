@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ansible Web Server</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; background-color: #f0f0f0; }
+        .box { background: white; padding: 20px; border-radius: 10px; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        p { font-size: 18px; color: #666; }
+        .highlight { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Welcome to my Ansible Project!</h1>
+        <hr>
+        <p>This page is served by host:</p>
+        <p class="highlight">{{ inventory_hostname }}</p>
+        
+        <p>Server IP Address:</p>
+        <p class="highlight">{{ ansible_default_ipv4.address }}</p>
+        
+        <p>Operating System:</p>
+        <p>{{ ansible_distribution }} {{ ansible_distribution_version }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+- name: Install Keepalived
+  yum:
+    name: keepalived
+    state: present
+
+- name: Configure Keepalived
+  template:
+    src: templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  register: keepalived_config_result
+
+- name: Allow VRRP Protocol in Firewall
+  shell: firewall-cmd --permanent --add-protocol=vrrp && firewall-cmd --reload
+  ignore_errors: true
+
+- name: Start Keepalived Service
+  service:
+    name: keepalived
+    state: started
+    enabled: yes
+
+- name: Restart Keepalived if config changed
+  service:
+    name: keepalived
+    state: restarted
+  when: keepalived_config_result.changed

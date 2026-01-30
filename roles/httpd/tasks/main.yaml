@@ -1,0 +1,34 @@
+---
+- name: Install httpd and dependencies
+  yum:
+    name:
+      - httpd
+      - policycoreutils-python-utils
+    state: present
+
+- name: Change httpd port in config file
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^Listen '
+    line: 'Listen {{ http_port }}'  
+  notify: Restart httpd              
+
+- name: Allow httpd to bind to custom port (SELinux)
+  command: semanage port -a -t http_port_t -p tcp {{ http_port }}
+  register: seport_result
+  failed_when: "seport_result.rc != 0 and 'already defined' not in seport_result.stderr"
+  changed_when: "seport_result.rc == 0"
+
+- name: Open Firewall port
+  firewalld:                         
+    port: "{{ http_port }}/tcp"
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Deploy HTML page
+  template:
+    src: index.html.j2               
+    dest: /var/www/html/index.html
+    mode: '0644'
+  notify: Restart httpd              

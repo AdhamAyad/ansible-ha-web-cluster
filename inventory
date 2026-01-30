@@ -1,0 +1,9 @@
+[final]
+10.178.240.98    vrrp_role=MASTER vrrp_priority=101
+10.178.240.242   vrrp_role=BACKUP vrrp_priority=100
+
+
+
+[testnat]
+192.168.235.129   vrrp_role=MASTER vrrp_priority=101
+192.168.235.130   vrrp_role=BACKUP vrrp_priority=100

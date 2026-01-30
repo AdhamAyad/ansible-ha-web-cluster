@@ -1,0 +1,4 @@
+---
+virtual_ip: "10.178.240.253"      
+vrrp_role: "BACKUP"
+vrrp_priority: 100

@@ -1,0 +1,31 @@
+---
+- name: Install Keepalived
+  yum:
+    name: keepalived
+    state: present
+
+- name: Allow binding to non-local IP (Important for VIP)
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: '1'
+    state: present
+    sysctl_set: yes
+
+- name: Configure Keepalived
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: Restart Keepalived      
+
+- name: Allow VRRP Protocol in Firewall (The Right Way)
+  firewalld:
+    rich_rule: rule protocol value="vrrp" accept
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Ensure Keepalived is started and enabled
+  service:
+    name: keepalived
+    state: started
+    enabled: yes

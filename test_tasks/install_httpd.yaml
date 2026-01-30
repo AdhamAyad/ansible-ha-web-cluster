@@ -1,0 +1,36 @@
+- name: Install httpd package
+  yum:
+    name: httpd
+    state: present
+
+- name: Install SELinux python tools
+  yum:
+    name: policycoreutils-python-utils
+    state: present
+
+- name: Change httpd port to 8080
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^Listen '
+    line: 'Listen 8080'
+
+- name: Allow httpd to bind to port 8080 (Manual Workaround)
+  command: semanage port -a -t http_port_t -p tcp 8080
+  register: seport_result
+  failed_when: "seport_result.rc != 0 and 'already defined' not in seport_result.stderr"
+  changed_when: "seport_result.rc == 0"
+
+- name: Open Firewall port 8080
+  shell: firewall-cmd --permanent --add-port=8080/tcp && firewall-cmd --reload
+
+- name: Deploy HTML page from Jinja2 template
+  template:
+    src: templates/index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0644' 
+
+- name: Restart httpd to apply changes
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes

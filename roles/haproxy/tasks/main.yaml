@@ -1,0 +1,32 @@
+---
+- name: Install HAProxy and utils
+  yum:
+    name:
+      - haproxy
+      - policycoreutils-python-utils
+    state: present
+
+- name: Allow HAProxy to connect to any network port (SELinux)
+  seboolean:                    
+    name: haproxy_connect_any
+    state: yes
+    persistent: yes
+
+- name: Configure HAProxy
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  notify: Restart HAProxy       
+
+- name: Open Firewall Port for HAProxy
+  firewalld:
+    service: http               
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Ensure HAProxy is started and enabled
+  service:
+    name: haproxy
+    state: started
+    enabled: yes

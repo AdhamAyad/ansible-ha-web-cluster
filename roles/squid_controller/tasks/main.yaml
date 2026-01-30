@@ -1,0 +1,22 @@
+---
+- name: Install Squid package
+  yum:
+    name: squid
+    state: present
+
+- name: Start and Enable Squid service
+  service:
+    name: squid
+    state: started
+    enabled: yes
+
+- name: Allow Squid Port in Firewall
+  shell: firewall-cmd --permanent --add-port={{ squid_port }}/tcp && firewall-cmd --reload
+  ignore_errors: yes    
+
+# - name: Allow Squid Port in Firewall
+#   fansible.posix.firewalld:
+#     port: "{{ squid_port }}/tcp"    
+#     permanent: yes
+#     state: enabled
+#     immediate: yes                   

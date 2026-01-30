@@ -1,0 +1,34 @@
+- name: Install HAProxy package
+  yum:
+    name: haproxy
+    state: present
+
+- name: Install SELinux python tools
+  yum:
+    name: policycoreutils-python-utils
+    state: present
+
+- name: Allow HAProxy to connect to any network port
+  command: setsebool -P haproxy_connect_any 1
+  changed_when: false
+
+- name: Configure HAProxy from Template
+  template:
+    src: templates/haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  register: haproxy_config_result
+
+- name: Open Firewall Port 80 (HTTP)
+  shell: firewall-cmd --permanent --add-service=http && firewall-cmd --reload
+
+- name: Start and enable HAProxy service
+  service:
+    name: haproxy
+    state: started
+    enabled: yes
+
+- name: Restart HAProxy if config changed
+  service:
+    name: haproxy
+    state: restarted
+  when: haproxy_config_result.changed
