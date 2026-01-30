@@ -101,7 +101,3 @@ ansible-playbook playbook001.yaml
 ## Development Notes
 
 The directory `test_tasks/` contains the initial monolithic task files created during the prototyping phase. These were later refactored into the modular roles structure present in the root directory to follow Ansible best practices.
-
-```
-
-```
